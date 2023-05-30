@@ -88,6 +88,7 @@ namespace GameNeuronal.Sources
                 // Actualiza el agente de IA
                 TomarDecision();
 
+                onCollition();
             }
         }
 
@@ -229,15 +230,14 @@ namespace GameNeuronal.Sources
 
         float[] GetEnvironmentFeatures()
         {
-            float[] features = new float[8];
+            float[] features = new float[7];
             features[0] = CalculateDistanceToObstacle();
             features[1] = CalculateObstaclePositionX();
             features[2] = CalculateObstaclePositionY();
-            features[3] = CalculateObstacleHeight();
-            features[4] = CalculateObstacleWidth();
-            features[5] = CalcularRecompensa();
-            features[6] = y;
-            features[7] = MainGame.speed;
+            features[3] = CalculateObstacleWidth();
+            features[4] = CalculateObstacleHeight();
+            features[5] = y;
+            features[6] = MainGame.speed;
             return features;
         }
 
