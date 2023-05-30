@@ -4,6 +4,7 @@ using System;
 
 namespace GameNeuronal.Sources
 {
+    /*
     public class Bird : BaseEnemy
     {
 
@@ -51,5 +52,5 @@ namespace GameNeuronal.Sources
 
             _spriteBatch.Draw(rect, coll, Color.Green);
         }
-    }
+    }*/
 }

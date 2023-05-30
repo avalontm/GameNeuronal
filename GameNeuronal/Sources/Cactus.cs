@@ -9,65 +9,28 @@ using System.Threading.Tasks;
 
 namespace GameNeuronal.Sources
 {
-    public class Cactus : BaseEnemy
+    public class Cactus
     {
-        public Cactus()
+        private Texture2D _texture;
+        private Vector2 _position;
+
+        public Vector2 Position => _position;
+
+        public Cactus(Texture2D texture, Vector2 position)
         {
-            Random rnd = new Random();
-
-            x = 1350;
-            type = (int)rnd.Next(6);
-
-            if( type < 3)
-            {
-                h = 66;
-                y = 470;
-            }
-            else
-            { 
-                h= 96;
-                y = 440;
-            }
-
-            switch(type)
-            {
-                case 0:
-                    w = 30;
-                    break;
-                    case 1:
-                    w = 64;
-                    break;
-                case 2:
-                    w = 98;
-                    break;
-                case 3:
-                    w = 46;
-                    break;
-                case 4:
-                    w = 96;
-                    break;
-                case 5:
-                    w = 146;
-                    break;
-            }
-
-            coll = new Rectangle(x, y, w, h);
-        }
-
-
-        public override void Update(double speed)
-        {
-            base.Update(speed);
-            x -= (int)speed;
+            _texture = texture;
+            _position = position;
 
         }
 
-        public override void Draw(SpriteBatch _spriteBatch)
+        public void Update(float _speed)
         {
-            base.Draw(_spriteBatch);
-            coll = new Rectangle((int)x, (int)y, w, h);
+            _position.X -= _speed;
+        }
 
-            _spriteBatch.Draw(rect, coll, Color.Green);
+        public void Draw(SpriteBatch spriteBatch)
+        {
+            spriteBatch.Draw(_texture, _position, Color.White);
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameNeuronal.Sources
 {
+    /*
     public class Background
     {
         public int x { set; get; }
@@ -36,5 +37,5 @@ namespace GameNeuronal.Sources
 
             _spriteBatch.Draw(rect, coords, Color.White);
         }
-    }
+    }*/
 }

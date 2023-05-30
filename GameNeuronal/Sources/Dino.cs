@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using SharpDX.Direct3D9;
 using System;
+using System.Diagnostics;
 using System.Linq;
 
 namespace GameNeuronal.Sources
 {
+    /*
     public class Dino
     {
         public int x { set; get; }
@@ -17,25 +17,36 @@ namespace GameNeuronal.Sources
         public bool crounching { set; get; }
         public float jump_stage { set; get; }
         public bool dead { set; get; }
-        public bool last { set;get; }
+        public bool last { set; get; }
         Texture2D rect { set; get; }
         public Rectangle coll { set; get; }
 
         //Red Reunoral (Inteligencia Artificial)
-        public RedNeuronal redNeuronal { private set; get; }
+        public QTable qTable { set; get; }
         Color color = Color.White;
 
-        public Dino()
+        private int distanciaCactus;
+        private int currentState;
+        private int currentAction;
+        private int prevState;
+        private int prevAction;
+
+        public Dino(QTable table)
         {
+            qTable = table;
+
+            // Establecer el estado inicial
+            currentState = 0;
+            currentAction = qTable.GetBestAction(currentState);
+
             rect = new Texture2D(MainGame._graphics.GraphicsDevice, 1, 1);
             rect.SetData(new[] { Color.White });
 
-            Start();
+            Reset();
 
-            redNeuronal = new RedNeuronal(this);
         }
 
-        public void Start()
+        public void Reset()
         {
             Random rnd = new Random();
 
@@ -43,6 +54,12 @@ namespace GameNeuronal.Sources
             y = 450;
             w = 80;
             h = 86;
+
+            distanciaCactus = 0;
+            currentState = 0;
+            currentAction = 0;
+            prevState = 0;
+            prevAction = 0;
 
             jumping = false;
             crounching = false;
@@ -84,22 +101,231 @@ namespace GameNeuronal.Sources
                     y = 450;
                 }
 
-                /*
-                    if (Inputs.IsKeyPressed(Keys.Up, true))
-                    {
-                        onJump();
-                    }
-                    if (Inputs.IsPressed(Keys.Down))
-                    {
-                        onDuck();
-                    }
-                */
-
-                redNeuronal.Update();
-
-                onCollition();
+                // Actualiza el agente de IA
+                TomarDecision();
 
             }
+        }
+
+        BaseEnemy GetEnemy()
+        {
+            if (MainGame.enemies.Count > 0)
+            {
+                int distance = CalculateDistanceToObstacle();
+
+                if (distance < 0)
+                {
+                    return MainGame.enemies[1];
+                }
+                else
+                {
+                    return MainGame.enemies[0];
+                }
+            }
+
+            return null;
+        }
+
+        public int CalculateDistanceToObstacle()
+        {
+            int distance = 0; // Inicializar con un valor infinito para encontrar el obstáculo más cercano
+
+            if (MainGame.enemies.Count > 0)
+            {
+                distance = MainGame.enemies[0].x - x;
+                if (distance < 0)
+                {
+                    distance = MainGame.enemies[1].x - x;
+                }
+            }
+
+            return distance;
+        }
+
+        public int CalculateObstaclePositionX()
+        {
+            int x = 0; 
+
+            if (MainGame.enemies.Count > 0)
+            {
+                int distance = CalculateDistanceToObstacle();
+
+                if (distance < 0)
+                {
+                    x = MainGame.enemies[1].x;
+                }else
+                {
+                    x = MainGame.enemies[0].x;
+                }
+            }
+
+            return x;
+        }
+
+        public int CalculateObstaclePositionY()
+        {
+            int y = 0;
+
+            if (MainGame.enemies.Count > 0)
+            {
+                int distance = CalculateDistanceToObstacle();
+
+                if (distance < 0)
+                {
+                    y = MainGame.enemies[1].y;
+                }
+                else
+                {
+                    y = MainGame.enemies[0].y;
+                }
+            }
+
+            return y;
+        }
+
+
+        public int CalculateObstacleWidth()
+        {
+            int w = 0;
+
+            if (MainGame.enemies.Count > 0)
+            {
+                int distance = CalculateDistanceToObstacle();
+
+                if (distance < 0)
+                {
+                    w = MainGame.enemies[1].w;
+                }
+                else
+                {
+                    w = MainGame.enemies[0].w;
+                }
+            }
+
+            return w;
+        }
+
+        public int CalculateObstacleHeight()
+        {
+            int h = 0;
+
+            if (MainGame.enemies.Count > 0)
+            {
+                int distance = CalculateDistanceToObstacle();
+
+                if (distance < 0)
+                {
+                    h = MainGame.enemies[1].h;
+                }
+                else
+                {
+                   h = MainGame.enemies[0].h;
+                }
+            }
+
+            return h;
+        }
+
+        public void TomarDecision()
+        {
+            prevState = currentState;
+            prevAction = currentAction;
+            distanciaCactus = CalculateDistanceToObstacle();
+            ActualizarEstado(distanciaCactus);
+
+            currentAction = qTable.GetBestAction(currentState);
+
+            if (currentAction == 1)
+            {
+                onJump();
+            }
+            else if (currentAction == 2)
+            {
+                onDuck();
+            }
+            else
+            {
+                // No hacer nada
+            }
+
+
+            // Calcular la recompensa obtenida después de realizar la acción (puede basarse en el éxito del salto, colisiones, etc.)
+            float recompensa = CalcularRecompensa();
+
+            ActualizarQValue(recompensa);
+        }
+
+        void ActualizarQValue(float reward)
+        {
+            qTable.UpdateQValue(prevState, prevAction, currentState, reward);
+        }
+
+        int CalcularRecompensa()
+        {
+            onCollition();
+
+            if (dead)
+            {
+                // El dinosaurio colisionó con un obstáculo (cactus)
+                return -1; // Recompensa negativa por colisión
+            }
+            else
+            {
+                // El dinosaurio realizó un salto exitoso sin colisionar
+                return 1; // Recompensa positiva por salto exitoso
+            }
+        }
+
+        void ActualizarEstado(int distanciaCactus)
+        {
+
+            currentState = MapDistanceToState(distanciaCactus);
+        }
+
+
+        int MapDistanceToState(int distanciaCactus)
+        {
+
+            var enemy = GetEnemy();
+
+            if(enemy == null)
+            {
+                return 0;
+            }
+            if (distanciaCactus <= 100)
+            {
+                if (enemy.h >= 30)
+                {
+                    return 4;
+                }
+                return 1;
+            }
+            else if (distanciaCactus <= 160)
+            {
+                if (enemy.h >= 30)
+                {
+                    return 4;
+                }
+                return 2;
+            }
+            else if (distanciaCactus <= 220)
+            {
+                if (enemy.h >= 30)
+                {
+                    return 4;
+                }
+                return 3;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+
+        public int ObtenerAccionActual()
+        {
+            return currentAction;
         }
 
         void onCollition()
@@ -158,5 +384,5 @@ namespace GameNeuronal.Sources
                 h = 52;
             }
         }
-    }
+    }*/
 }

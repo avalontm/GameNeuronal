@@ -1,3 +1,3 @@
 ﻿
-using var game = new GameNeuronal.MainGame();
+using var game = new GameNeuronal.Game1();
 game.Run();
