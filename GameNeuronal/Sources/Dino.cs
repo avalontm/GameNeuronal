@@ -232,11 +232,11 @@ namespace GameNeuronal.Sources
             float[] output = neuralNetwork.Predict(input);
 
 
-            if (currentAction == 1)
+            if (output[0] >= 0.5)
             {
                 onJump();
             }
-            else if (currentAction == 2)
+            else if (output[1] >= 0.5)
             {
                 onDuck();
             }

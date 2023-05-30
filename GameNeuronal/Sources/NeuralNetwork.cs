@@ -27,7 +27,7 @@ public class NeuralNetwork
         double[] output = network.Compute(normalizedInput);
 
         // Desnormalizar los valores de salida al rango original
-        float[] denormalizedOutput = DenormalizeOutput(output, 0, 1);
+        float[] denormalizedOutput = DenormalizeOutput(output, 1, 1);
 
         return denormalizedOutput;
     }
