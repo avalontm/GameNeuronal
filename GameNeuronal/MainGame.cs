@@ -13,7 +13,8 @@ namespace GameNeuronal
         public static GraphicsDeviceManager _graphics;
         public static IList<Dino> players;
         public static IList<BaseEnemy> enemies;
-        public static double speed = 12;
+        float speedStart = 12;
+        public static float speed = 12;
         public static bool GameOver = false;
 
         SpriteBatch _spriteBatch;
@@ -64,7 +65,7 @@ namespace GameNeuronal
         {
             base.Update(gameTime);
 
-            Inputs.GetState();
+            InputManager.GetState();
 
             if (GameOver)
             {
@@ -98,6 +99,7 @@ namespace GameNeuronal
                 }
 
                 every_sec += 1;
+                speed += (float)(gameTime.TotalGameTime.TotalSeconds * 0.00025f);
             }
         }
 
@@ -114,6 +116,7 @@ namespace GameNeuronal
             }
 
             generation++;
+            speed = speedStart;
             GameOver = false;
         }
 

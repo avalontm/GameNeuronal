@@ -10,7 +10,7 @@ public class NeuralNetwork
     public NeuralNetwork()
     {
         // Crear la red neuronal
-        network = new ActivationNetwork(new SigmoidFunction(), 3, 3, 2);
+        network = new ActivationNetwork(new SigmoidFunction(), 8, 8, 2);
 
         // Inicializar los pesos de la red neuronal de forma aleatoria
         nguyen = new NguyenWidrow(network);

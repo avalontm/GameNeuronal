@@ -2,7 +2,7 @@
 
 namespace GameNeuronal.Sources
 {
-    public static class Inputs
+    public static class InputManager
     {
         static KeyboardState currentKeyState;
         static KeyboardState previousKeyState;

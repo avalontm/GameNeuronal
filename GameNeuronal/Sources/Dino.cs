@@ -1,12 +1,11 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Diagnostics;
 using System.Linq;
 
 namespace GameNeuronal.Sources
 {
-    
+
     public class Dino
     {
         public int x { set; get; }
@@ -23,14 +22,8 @@ namespace GameNeuronal.Sources
 
         Color color = Color.White;
 
-        private int distanciaCactus;
-        private int currentState;
-        private int currentAction;
-        private int prevState;
-        private int prevAction;
-
         //Red Reunoral (Inteligencia Artificial)
-        private NeuralNetwork neuralNetwork;
+        NeuralNetwork neuralNetwork;
 
         public Dino()
         {
@@ -51,12 +44,6 @@ namespace GameNeuronal.Sources
             y = 450;
             w = 80;
             h = 86;
-
-            distanciaCactus = 0;
-            currentState = 0;
-            currentAction = 0;
-            prevState = 0;
-            prevAction = 0;
 
             jumping = false;
             crounching = false;
@@ -104,25 +91,6 @@ namespace GameNeuronal.Sources
             }
         }
 
-        BaseEnemy GetEnemy()
-        {
-            if (MainGame.enemies.Count > 0)
-            {
-                int distance = CalculateDistanceToObstacle();
-
-                if (distance < 0)
-                {
-                    return MainGame.enemies[1];
-                }
-                else
-                {
-                    return MainGame.enemies[0];
-                }
-            }
-
-            return null;
-        }
-
         public int CalculateDistanceToObstacle()
         {
             int distance = 0; // Inicializar con un valor infinito para encontrar el obstáculo más cercano
@@ -132,7 +100,10 @@ namespace GameNeuronal.Sources
                 distance = MainGame.enemies[0].x - x;
                 if (distance < 0)
                 {
-                    distance = MainGame.enemies[1].x - x;
+                    if (MainGame.enemies.Count > 1)
+                    {
+                        distance = MainGame.enemies[1].x - x;
+                    }
                 }
             }
 
@@ -141,7 +112,7 @@ namespace GameNeuronal.Sources
 
         public int CalculateObstaclePositionX()
         {
-            int x = 0; 
+            int x = 0;
 
             if (MainGame.enemies.Count > 0)
             {
@@ -149,8 +120,12 @@ namespace GameNeuronal.Sources
 
                 if (distance < 0)
                 {
-                    x = MainGame.enemies[1].x;
-                }else
+                    if (MainGame.enemies.Count > 1)
+                    {
+                        x = MainGame.enemies[1].x;
+                    }
+                }
+                else
                 {
                     x = MainGame.enemies[0].x;
                 }
@@ -169,7 +144,10 @@ namespace GameNeuronal.Sources
 
                 if (distance < 0)
                 {
-                    y = MainGame.enemies[1].y;
+                    if (MainGame.enemies.Count > 1)
+                    {
+                        y = MainGame.enemies[1].y;
+                    }
                 }
                 else
                 {
@@ -191,7 +169,10 @@ namespace GameNeuronal.Sources
 
                 if (distance < 0)
                 {
-                    w = MainGame.enemies[1].w;
+                    if (MainGame.enemies.Count > 1)
+                    {
+                        w = MainGame.enemies[1].w;
+                    }
                 }
                 else
                 {
@@ -212,11 +193,14 @@ namespace GameNeuronal.Sources
 
                 if (distance < 0)
                 {
-                    h = MainGame.enemies[1].h;
+                    if (MainGame.enemies.Count > 1)
+                    {
+                        h = MainGame.enemies[1].h;
+                    }
                 }
                 else
                 {
-                   h = MainGame.enemies[0].h;
+                    h = MainGame.enemies[0].h;
                 }
             }
 
@@ -235,23 +219,25 @@ namespace GameNeuronal.Sources
             {
                 onJump();
             }
-            else if (output[1] >= 0.5)
+
+            if (output[1] >= 0.5)
             {
                 onDuck();
-            }
-            else
-            {
-                // No hacer nada
             }
 
         }
 
         float[] GetEnvironmentFeatures()
         {
-            float[] features = new float[3];
+            float[] features = new float[8];
             features[0] = CalculateDistanceToObstacle();
-            features[1] = CalculateObstacleHeight();
-            features[2] = CalcularRecompensa();
+            features[1] = CalculateObstaclePositionX();
+            features[2] = CalculateObstaclePositionY();
+            features[3] = CalculateObstacleHeight();
+            features[4] = CalculateObstacleWidth();
+            features[5] = CalcularRecompensa();
+            features[6] = y;
+            features[7] = MainGame.speed;
             return features;
         }
 
@@ -262,65 +248,13 @@ namespace GameNeuronal.Sources
             if (dead)
             {
                 // El dinosaurio colisionó con un obstáculo (cactus)
-                return 1; // Recompensa negativa por colisión
+                return -1; // Recompensa negativa por colisión
             }
             else
             {
                 // El dinosaurio realizó un salto exitoso sin colisionar
-                return 0; // Recompensa positiva por salto exitoso
+                return 1; // Recompensa positiva por salto exitoso
             }
-        }
-
-        void ActualizarEstado(int distanciaCactus)
-        {
-
-            currentState = MapDistanceToState(distanciaCactus);
-        }
-
-
-        int MapDistanceToState(int distanciaCactus)
-        {
-
-            var enemy = GetEnemy();
-
-            if(enemy == null)
-            {
-                return 0;
-            }
-            if (distanciaCactus <= 100)
-            {
-                if (enemy.h >= 30)
-                {
-                    return 4;
-                }
-                return 1;
-            }
-            else if (distanciaCactus <= 160)
-            {
-                if (enemy.h >= 30)
-                {
-                    return 4;
-                }
-                return 2;
-            }
-            else if (distanciaCactus <= 220)
-            {
-                if (enemy.h >= 30)
-                {
-                    return 4;
-                }
-                return 3;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-
-
-        public int ObtenerAccionActual()
-        {
-            return currentAction;
         }
 
         void onCollition()
