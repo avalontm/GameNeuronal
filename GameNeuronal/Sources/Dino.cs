@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace GameNeuronal.Sources
 {
-    /*
+    
     public class Dino
     {
         public int x { set; get; }
@@ -21,8 +21,6 @@ namespace GameNeuronal.Sources
         Texture2D rect { set; get; }
         public Rectangle coll { set; get; }
 
-        //Red Reunoral (Inteligencia Artificial)
-        public QTable qTable { set; get; }
         Color color = Color.White;
 
         private int distanciaCactus;
@@ -31,13 +29,12 @@ namespace GameNeuronal.Sources
         private int prevState;
         private int prevAction;
 
-        public Dino(QTable table)
-        {
-            qTable = table;
+        //Red Reunoral (Inteligencia Artificial)
+        private NeuralNetwork neuralNetwork;
 
-            // Establecer el estado inicial
-            currentState = 0;
-            currentAction = qTable.GetBestAction(currentState);
+        public Dino()
+        {
+            neuralNetwork = new NeuralNetwork();
 
             rect = new Texture2D(MainGame._graphics.GraphicsDevice, 1, 1);
             rect.SetData(new[] { Color.White });
@@ -228,12 +225,12 @@ namespace GameNeuronal.Sources
 
         public void TomarDecision()
         {
-            prevState = currentState;
-            prevAction = currentAction;
-            distanciaCactus = CalculateDistanceToObstacle();
-            ActualizarEstado(distanciaCactus);
+            // Obtener las características del entorno (por ejemplo, la posición del dinosaurio y el cactus)
+            float[] input = GetEnvironmentFeatures();
 
-            currentAction = qTable.GetBestAction(currentState);
+            // Obtener la predicción de la red neuronal
+            float[] output = neuralNetwork.Predict(input);
+
 
             if (currentAction == 1)
             {
@@ -248,16 +245,15 @@ namespace GameNeuronal.Sources
                 // No hacer nada
             }
 
-
-            // Calcular la recompensa obtenida después de realizar la acción (puede basarse en el éxito del salto, colisiones, etc.)
-            float recompensa = CalcularRecompensa();
-
-            ActualizarQValue(recompensa);
         }
 
-        void ActualizarQValue(float reward)
+        float[] GetEnvironmentFeatures()
         {
-            qTable.UpdateQValue(prevState, prevAction, currentState, reward);
+            float[] features = new float[3];
+            features[0] = CalculateDistanceToObstacle();
+            features[1] = CalculateObstacleHeight();
+            features[2] = CalcularRecompensa();
+            return features;
         }
 
         int CalcularRecompensa()
@@ -384,5 +380,5 @@ namespace GameNeuronal.Sources
                 h = 52;
             }
         }
-    }*/
+    }
 }

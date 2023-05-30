@@ -1,5 +1,8 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.Logging;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,18 +14,26 @@ namespace GameNeuronal.Sources
         private float[,] qTable;
         private float learningRate;
         private float discountFactor;
+        private int numStates;
+        private int numActions;
 
         public QLearning(int numStates, int numActions, float learningRate, float discountFactor)
         {
-            qTable = new float[numStates, numActions];
+            this.numStates = numStates;
+            this.numActions = numActions;
             this.learningRate = learningRate;
             this.discountFactor = discountFactor;
-        }
 
-        public int GetAction(int state)
-        {
-            int bestAction = GetBestAction(state);
-            return bestAction;
+            qTable = new float[numStates, numActions];
+
+            // Inicializar la tabla Q con valores iniciales
+            for (int state = 0; state < numStates; state++)
+            {
+                for (int action = 0; action < numActions; action++)
+                {
+                    qTable[state, action] = 0f;
+                }
+            }
         }
 
         public int GetBestAction(int state)
@@ -30,7 +41,8 @@ namespace GameNeuronal.Sources
             int bestAction = 0;
             float bestQValue = qTable[state, 0];
 
-            for (int action = 1; action < qTable.GetLength(1); action++)
+            // Encontrar la mejor acción basada en los valores Q
+            for (int action = 1; action < numActions; action++)
             {
                 if (qTable[state, action] > bestQValue)
                 {
@@ -42,13 +54,31 @@ namespace GameNeuronal.Sources
             return bestAction;
         }
 
-        public void UpdateQValue(int prevState, int prevAction, int currentState, int currentAction, float reward)
+        public void UpdateQValue(int prevState, int prevAction, int currentState, float reward)
         {
-            float prevQValue = qTable[prevState, prevAction];
-            float maxQValue = qTable[currentState, GetBestAction(currentState)];
-            float newQValue = prevQValue + learningRate * (reward + discountFactor * maxQValue - prevQValue);
+            // Calcular el nuevo valor Q utilizando el algoritmo Q-Learning
+            float currentQValue = qTable[prevState, prevAction];
+            float maxFutureQValue = GetMaxQValue(currentState);
+            float newQValue = currentQValue + learningRate * (reward + discountFactor * maxFutureQValue - currentQValue);
 
+            // Actualizar el valor Q en la tabla
             qTable[prevState, prevAction] = newQValue;
+        }
+
+        private float GetMaxQValue(int state)
+        {
+            float maxQValue = qTable[state, 0];
+
+            // Encontrar el valor Q máximo para el estado dado
+            for (int action = 1; action < numActions; action++)
+            {
+                if (qTable[state, action] > maxQValue)
+                {
+                    maxQValue = qTable[state, action];
+                }
+            }
+
+            return maxQValue;
         }
     }
 }

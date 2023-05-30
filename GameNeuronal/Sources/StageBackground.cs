@@ -3,8 +3,8 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace GameNeuronal.Sources
 {
-    /*
-    public class Background
+    
+    public class StageBackground
     {
         public int x { set; get; }
         public int y { set; get; }
@@ -13,7 +13,7 @@ namespace GameNeuronal.Sources
 
         Texture2D rect { set; get; }
 
-        public Background()
+        public StageBackground()
         {
             rect = new Texture2D(MainGame._graphics.GraphicsDevice, 1, 1);
             rect.SetData(new[] { Color.White });
@@ -37,5 +37,5 @@ namespace GameNeuronal.Sources
 
             _spriteBatch.Draw(rect, coords, Color.White);
         }
-    }*/
+    }
 }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace GameNeuronal.Sources
 {
-    /*
+    
     public class BaseEnemy 
     {
         public int x { set; get; }
@@ -40,5 +40,5 @@ namespace GameNeuronal.Sources
         {
 
         }
-    }*/
+    }
 }
