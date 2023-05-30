@@ -231,7 +231,6 @@ namespace GameNeuronal.Sources
             // Obtener la predicción de la red neuronal
             float[] output = neuralNetwork.Predict(input);
 
-
             if (output[0] >= 0.5)
             {
                 onJump();
@@ -263,12 +262,12 @@ namespace GameNeuronal.Sources
             if (dead)
             {
                 // El dinosaurio colisionó con un obstáculo (cactus)
-                return -1; // Recompensa negativa por colisión
+                return 1; // Recompensa negativa por colisión
             }
             else
             {
                 // El dinosaurio realizó un salto exitoso sin colisionar
-                return 1; // Recompensa positiva por salto exitoso
+                return 0; // Recompensa positiva por salto exitoso
             }
         }
 

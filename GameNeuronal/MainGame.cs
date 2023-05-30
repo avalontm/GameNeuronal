@@ -52,7 +52,7 @@ namespace GameNeuronal
             players = new List<Dino>();
             enemies = new List<BaseEnemy>();
 
-            for (int i = 0; i < 1; i++)
+            for (int i = 0; i < 1000; i++)
             {
                 players.Add(new Dino());
             }
@@ -110,7 +110,6 @@ namespace GameNeuronal
 
             for (int i = 0; i < players.Count; i++)
             {
-                //players[i].redNeuronal.TrainNeuralNetwork();
                 players[i].Reset();
             }
 
