@@ -1,10 +1,13 @@
 ﻿using Accord.Neuro;
 using Accord.Neuro.Learning;
 using Accord.Math;
+using Microsoft.VisualBasic.Devices;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 public class NeuralNetwork
 {
-    private ActivationNetwork network;
+    ActivationNetwork network;
     NguyenWidrow nguyen;
 
     public NeuralNetwork()
@@ -25,7 +28,7 @@ public class NeuralNetwork
 
         // Calcular las salidas de la red neuronal
         double[] output = network.Compute(normalizedInput);
-    
+
         // Desnormalizar los valores de salida al rango original
         float[] denormalizedOutput = DenormalizeOutput(output, 0, 1);
 
@@ -51,5 +54,6 @@ public class NeuralNetwork
         }
         return denormalizedOutput;
     }
+
 }
 
