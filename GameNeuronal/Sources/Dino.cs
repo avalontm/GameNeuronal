@@ -16,11 +16,9 @@ namespace GameNeuronal.Sources
         public bool crounching { set; get; }
         public float jump_stage { set; get; }
         public bool dead { set; get; }
-        public bool last { set; get; }
+
         Texture2D rect { set; get; }
         public Rectangle coll { set; get; }
-
-        Color color = Color.White;
 
         //Red Reunoral (Inteligencia Artificial)
         NeuralNetwork neuralNetwork;
@@ -53,10 +51,18 @@ namespace GameNeuronal.Sources
             jumping = false;
             crounching = false;
 
-            color = Color.White;
             coll = new Rectangle(x, y, w, h);
             dead = false;
-            last = false;
+        }
+
+        public void SetNeuralNetwork(NeuralNetwork neuralNetwork)
+        {
+            this.neuralNetwork = neuralNetwork;
+        }
+
+        public NeuralNetwork Clone()
+        {
+            return (NeuralNetwork)neuralNetwork.Clone();
         }
 
         public void Update(GameTime gameTime)
@@ -270,9 +276,9 @@ namespace GameNeuronal.Sources
                 {
                     if (MainGame.players.Where(x => !x.dead).Count() == 1)
                     {
-                        last = true;
+                        MainGame.LastPlayer = this;
                     }
-                    color = Color.Red;
+
                     dead = true;
                 }
             }
@@ -284,7 +290,7 @@ namespace GameNeuronal.Sources
             {
                 coll = new Rectangle(x, y, w, h);
 
-                _spriteBatch.Draw(Animations.dino[0], coll, color);
+                _spriteBatch.Draw(Animations.dino[0], coll, Color.White);
             }
         }
 

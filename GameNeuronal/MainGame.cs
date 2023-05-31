@@ -18,6 +18,7 @@ namespace GameNeuronal
         float speedStart = 12;
         public static float speed = 12;
         public static bool GameOver = false;
+        public static Dino LastPlayer;
 
         SpriteBatch _spriteBatch;
         StageBackground background;
@@ -121,6 +122,7 @@ namespace GameNeuronal
             {
                 enemies.Remove(enemies[c]);
             }
+
 
             for (int i = 0; i < players.Count; i++)
             {

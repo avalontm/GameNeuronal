@@ -1,11 +1,7 @@
 ﻿using Accord.Neuro;
-using Accord.Neuro.Learning;
-using Accord.Math;
-using Microsoft.VisualBasic.Devices;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System;
 
-public class NeuralNetwork
+public class NeuralNetwork : ICloneable
 {
     ActivationNetwork network;
     NguyenWidrow nguyen;
@@ -55,5 +51,9 @@ public class NeuralNetwork
         return denormalizedOutput;
     }
 
+    public object Clone()
+    {
+        return this.MemberwiseClone();
+    }
 }
 

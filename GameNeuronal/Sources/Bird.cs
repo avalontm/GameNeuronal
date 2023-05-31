@@ -25,15 +25,12 @@ namespace GameNeuronal.Sources
             switch (type)
             {
                 case 0:
-                    w = 30;
                     y = 365;
                     break;
                 case 1:
-                    w = 64;
                     y = 440;
                     break;
                 case 2:
-                    w = 98;
                     y = 465;
                     break;
             }
