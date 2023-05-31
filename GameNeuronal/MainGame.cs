@@ -23,6 +23,7 @@ namespace GameNeuronal
         StageBackground background;
         SpriteFont font;
 
+        ProbabilidadPorcentaje probabilidad;
         int every_sec = 0;
         int generation = 0;
         int alive = 0;
@@ -56,6 +57,7 @@ namespace GameNeuronal
             // TODO: use this.Content to load your game content here
             font = Content.Load<SpriteFont>("default");
 
+            probabilidad = new ProbabilidadPorcentaje();
             Animations.Load(Content);
 
             background = new StageBackground();
@@ -168,9 +170,7 @@ namespace GameNeuronal
 
         void Spawn_Enemy()
         {
-            Random rnd = new Random();
-
-            if (rnd.Next(10) == 0)
+            if (probabilidad.GenerarConProbabilidad(20))
             {
                 enemies.Add(new Bird());
             }
