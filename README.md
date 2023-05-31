@@ -2,6 +2,12 @@
 
 Este es un ejemplo del uso de red neuronal simple para que el dinosario pueda tomar la desision de saltar o no un obstaculo dependiendo la velocidad del juego.
 
+# Requerido
+- Visual Studio 2022
+- Net6.0
+- MonoGame 3.8
+- Accord.Neuro
+
 
 ## Pantalla
 cunado los dinosaurios esten muertos reinicia el juego con ESC
