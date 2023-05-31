@@ -18,13 +18,10 @@ namespace GameNeuronal.Sources
 
         public int type { set; get; }
 
-        internal Texture2D rect { set; get; }
-        public Rectangle coll { set; get; }
+        public Rectangle Bounds { internal set; get; }
 
         public BaseEnemy()
         {
-            rect = new Texture2D(MainGame._graphics.GraphicsDevice, 1, 1);
-            rect.SetData(new[] { Color.White });
 
         }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Accord.Collections;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
@@ -17,8 +18,8 @@ namespace GameNeuronal.Sources
         public float jump_stage { set; get; }
         public bool dead { set; get; }
 
-        Texture2D rect { set; get; }
-        public Rectangle coll { set; get; }
+        //Colision
+        public Rectangle Bounds { private set; get; }
 
         //Red Reunoral (Inteligencia Artificial)
         NeuralNetwork neuralNetwork;
@@ -31,9 +32,6 @@ namespace GameNeuronal.Sources
         public Dino()
         {
             neuralNetwork = new NeuralNetwork();
-
-            rect = new Texture2D(MainGame._graphics.GraphicsDevice, 1, 1);
-            rect.SetData(new[] { Color.White });
 
             Reset();
 
@@ -51,18 +49,8 @@ namespace GameNeuronal.Sources
             jumping = false;
             crounching = false;
 
-            coll = new Rectangle(x, y, w, h);
+            Bounds = new Rectangle(x, y, w, h);
             dead = false;
-        }
-
-        public void SetNeuralNetwork(NeuralNetwork neuralNetwork)
-        {
-            this.neuralNetwork = neuralNetwork;
-        }
-
-        public NeuralNetwork Clone()
-        {
-            return (NeuralNetwork)neuralNetwork.Clone();
         }
 
         public void Update(GameTime gameTime)
@@ -97,10 +85,30 @@ namespace GameNeuronal.Sources
                 }
 
                 // Actualiza el agente de IA
-                TomarDecision();
+                onIA();
 
                 onCollition();
             }
+        }
+
+        public void onIA()
+        {
+            // Obtener las características del entorno (por ejemplo, la posición del dinosaurio y el cactus)
+            float[] input = GetGameStatus();
+
+            // Obtener la predicción de la red neuronal
+            float[] output = neuralNetwork.Predict(input);
+
+            if (output[0] >= 0.5) //Esta salida es para saltar
+            {
+                onJump();
+            }
+
+            if (output[1] >= 0.5) //Esta salida es para agacharse
+            {
+                onDuck();
+            }
+
         }
 
         public int CalculateDistanceToObstacle()
@@ -109,12 +117,12 @@ namespace GameNeuronal.Sources
 
             if (MainGame.enemies.Count > 0)
             {
-                distance = MainGame.enemies[0].x - x;
+                distance = MainGame.enemies[0].Bounds.X - Bounds.X;
                 if (distance < 0)
                 {
                     if (MainGame.enemies.Count > 1)
                     {
-                        distance = MainGame.enemies[1].x - x;
+                        distance = MainGame.enemies[1].Bounds.X - Bounds.X;
                     }
                 }
             }
@@ -134,12 +142,12 @@ namespace GameNeuronal.Sources
                 {
                     if (MainGame.enemies.Count > 1)
                     {
-                        x = MainGame.enemies[1].x;
+                        x = MainGame.enemies[1].Bounds.X;
                     }
                 }
                 else
                 {
-                    x = MainGame.enemies[0].x;
+                    x = MainGame.enemies[0].Bounds.X;
                 }
             }
 
@@ -158,12 +166,12 @@ namespace GameNeuronal.Sources
                 {
                     if (MainGame.enemies.Count > 1)
                     {
-                        y = MainGame.enemies[1].y;
+                        y = MainGame.enemies[1].Bounds.Y;
                     }
                 }
                 else
                 {
-                    y = MainGame.enemies[0].y;
+                    y = MainGame.enemies[0].Bounds.Y;
                 }
             }
 
@@ -183,12 +191,12 @@ namespace GameNeuronal.Sources
                 {
                     if (MainGame.enemies.Count > 1)
                     {
-                        w = MainGame.enemies[1].w;
+                        w = MainGame.enemies[1].Bounds.Width;
                     }
                 }
                 else
                 {
-                    w = MainGame.enemies[0].w;
+                    w = MainGame.enemies[0].Bounds.Width;
                 }
             }
 
@@ -207,39 +215,20 @@ namespace GameNeuronal.Sources
                 {
                     if (MainGame.enemies.Count > 1)
                     {
-                        h = MainGame.enemies[1].h;
+                        h = MainGame.enemies[1].Bounds.Height;
                     }
                 }
                 else
                 {
-                    h = MainGame.enemies[0].h;
+                    h = MainGame.enemies[0].Bounds.Height;
                 }
             }
 
             return h;
         }
 
-        public void TomarDecision()
-        {
-            // Obtener las características del entorno (por ejemplo, la posición del dinosaurio y el cactus)
-            float[] input = GetEnvironmentFeatures();
 
-            // Obtener la predicción de la red neuronal
-            float[] output = neuralNetwork.Predict(input);
-
-            if (output[0] >= 0.5)
-            {
-                onJump();
-            }
-
-            if (output[1] >= 0.5)
-            {
-                onDuck();
-            }
-
-        }
-
-        float[] GetEnvironmentFeatures()
+        float[] GetGameStatus()
         {
             float[] features = new float[7];
             features[0] = CalculateDistanceToObstacle();
@@ -247,25 +236,9 @@ namespace GameNeuronal.Sources
             features[2] = CalculateObstaclePositionY();
             features[3] = CalculateObstacleWidth();
             features[4] = CalculateObstacleHeight();
-            features[5] = y;
+            features[5] = Bounds.Y;
             features[6] = MainGame.speed;
             return features;
-        }
-
-        int CalcularRecompensa()
-        {
-            onCollition();
-
-            if (dead)
-            {
-                // El dinosaurio colisionó con un obstáculo (cactus)
-                return -1; // Recompensa negativa por colisión
-            }
-            else
-            {
-                // El dinosaurio realizó un salto exitoso sin colisionar
-                return 1; // Recompensa positiva por salto exitoso
-            }
         }
 
         void onCollition()
@@ -284,13 +257,27 @@ namespace GameNeuronal.Sources
             }
         }
 
+        void onDebug(SpriteBatch _spriteBatch)
+        {
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, 1), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y, 1, Bounds.Height), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X + Bounds.Width, Bounds.Y, 1, Bounds.Height), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y + Bounds.Height, Bounds.Width, 1), Color.Red);
+        }
+
         public void Draw(SpriteBatch _spriteBatch)
         {
             if (!dead)
             {
-                coll = new Rectangle(x, y, w, h);
+                int offset = 20;
+                Bounds = new Rectangle(x + offset, y + offset, w - (offset*2), h - (offset+5));
+                Rectangle rec = new Rectangle(x , y , w , h );
+                _spriteBatch.Draw(Animations.dino[0], rec, Color.White);
 
-                _spriteBatch.Draw(Animations.dino[0], coll, Color.White);
+                if (MainGame.IsDebug)
+                {
+                    onDebug(_spriteBatch);
+                }
             }
         }
 
@@ -301,7 +288,7 @@ namespace GameNeuronal.Sources
 
         bool Collition(BaseEnemy enemy)
         {
-            return this.coll.Intersects(enemy.coll);
+            return this.Bounds.Intersects(enemy.Bounds);
         }
 
         public void onJump()

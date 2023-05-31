@@ -46,7 +46,7 @@ namespace GameNeuronal.Sources
                     break;
             }
 
-            coll = new Rectangle(x, y, w, h);
+            Bounds = new Rectangle(x, y, w, h);
         }
 
 
@@ -60,9 +60,25 @@ namespace GameNeuronal.Sources
         public override void Draw(SpriteBatch _spriteBatch)
         {
             base.Draw(_spriteBatch);
-            coll = new Rectangle((int)x, (int)y, w, h);
 
-            _spriteBatch.Draw(Animations.cactus[type], coll, Color.White);
+            int offset = 10;
+            Bounds = new Rectangle(x + offset, y + offset, w - (offset * 2), h - offset);
+            Rectangle rec = new Rectangle(x, y, w, h);
+            _spriteBatch.Draw(Animations.cactus[type], rec, Color.White);
+
+            if (MainGame.IsDebug)
+            {
+                onDebug(_spriteBatch);
+            }
         }
+
+        void onDebug(SpriteBatch _spriteBatch)
+        {
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, 1), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y, 1, Bounds.Height), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X + Bounds.Width, Bounds.Y, 1, Bounds.Height), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y + Bounds.Height, Bounds.Width, 1), Color.Red);
+        }
+
     }
 }

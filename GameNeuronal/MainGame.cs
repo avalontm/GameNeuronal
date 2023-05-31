@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace GameNeuronal
 {
@@ -19,7 +18,7 @@ namespace GameNeuronal
         public static float speed = 12;
         public static bool GameOver = false;
         public static Dino LastPlayer;
-
+        public static bool IsDebug { private set; get; }
         SpriteBatch _spriteBatch;
         StageBackground background;
         SpriteFont font;
@@ -58,6 +57,7 @@ namespace GameNeuronal
             // TODO: use this.Content to load your game content here
             font = Content.Load<SpriteFont>("default");
 
+            DrawManager.Init(_graphics.GraphicsDevice);
             probabilidad = new ProbabilidadPorcentaje();
             Animations.Load(Content);
 
@@ -86,6 +86,11 @@ namespace GameNeuronal
                 {
                     GameStart();
                 }
+            }
+
+            if (InputManager.IsKeyPressed( Keys.F1, true))
+            {
+                IsDebug = !IsDebug;
             }
 
             onGameOver();
@@ -193,16 +198,16 @@ namespace GameNeuronal
                 }
             }
 
-            _spriteBatch.DrawString(font, $"(Obstacle) Distance: {playerTarget.CalculateDistanceToObstacle()}", new Vector2(10, 20), Color.Black);
-            _spriteBatch.DrawString(font, $"(Obstacle) X: {playerTarget.CalculateObstaclePositionX()}", new Vector2(10, 40), Color.Black);
-            _spriteBatch.DrawString(font, $"(Obstacle) Y: {playerTarget.CalculateObstaclePositionY()}", new Vector2(10, 60), Color.Black);
-            _spriteBatch.DrawString(font, $"(Obstacle) Width: {playerTarget.CalculateObstacleWidth()}", new Vector2(10, 80), Color.Black);
-            _spriteBatch.DrawString(font, $"(Obstacle) Height: {playerTarget.CalculateObstacleHeight()}", new Vector2(10, 100), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstaculo) Distancia: {playerTarget.CalculateDistanceToObstacle()}", new Vector2(10, 20), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstaculo) X: {playerTarget.CalculateObstaclePositionX()}", new Vector2(10, 40), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstaculo) Y: {playerTarget.CalculateObstaclePositionY()}", new Vector2(10, 60), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstaculo) Ancho: {playerTarget.CalculateObstacleWidth()}", new Vector2(10, 80), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstaculo) Alto: {playerTarget.CalculateObstacleHeight()}", new Vector2(10, 100), Color.Black);
             _spriteBatch.DrawString(font, $"(Dino) Y: {playerTarget.y}", new Vector2(10, 120), Color.Black);
-            _spriteBatch.DrawString(font, $"(Game) Speed: {speed}", new Vector2(10, 140), Color.Black);
+            _spriteBatch.DrawString(font, $"(Juego) Velocidad: {speed}", new Vector2(10, 140), Color.Black);
 
-            _spriteBatch.DrawString(font, $"Generation: {generation}", new Vector2(_graphics.PreferredBackBufferWidth - 250, 20), Color.Black);
-            _spriteBatch.DrawString(font, $"Alive: {alive}", new Vector2(_graphics.PreferredBackBufferWidth - 220, 40), Color.Black);
+            _spriteBatch.DrawString(font, $"Generacion: {generation}", new Vector2(_graphics.PreferredBackBufferWidth - 250, 20), Color.Black);
+            _spriteBatch.DrawString(font, $"Vivos: {alive}", new Vector2(_graphics.PreferredBackBufferWidth - 220, 40), Color.Black);
         }
     }
 }

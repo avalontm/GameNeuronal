@@ -35,7 +35,7 @@ namespace GameNeuronal.Sources
                     break;
             }
 
-            coll = new Rectangle(x, y, w, h);
+            Bounds = new Rectangle(x, y, w, h);
         }
 
 
@@ -64,9 +64,24 @@ namespace GameNeuronal.Sources
         {
             base.Draw(_spriteBatch);
 
-            coll = new Rectangle((int)x, (int)y, w, h);
+            int offset = 5;
+            Bounds = new Rectangle(x + (offset+5), y + offset, w - (offset * 2), h - (offset*2));
+            Rectangle rec = new Rectangle(x, y, w, h);
 
-            _spriteBatch.Draw(Animations.birds[fotogramaActual], coll, Color.White);
+            _spriteBatch.Draw(Animations.birds[fotogramaActual], rec, Color.White);
+
+            if (MainGame.IsDebug)
+            {
+                onDebug(_spriteBatch);
+            }
+        }
+
+        void onDebug(SpriteBatch _spriteBatch)
+        {
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y, Bounds.Width, 1), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y, 1, Bounds.Height), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X + Bounds.Width, Bounds.Y, 1, Bounds.Height), Color.Red);
+            DrawManager.DrawLine(_spriteBatch, new Rectangle(Bounds.X, Bounds.Y + Bounds.Height, Bounds.Width, 1), Color.Red);
         }
     }
 }
