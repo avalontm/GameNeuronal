@@ -34,6 +34,10 @@ namespace GameNeuronal
             _graphics.PreferredBackBufferHeight = 720;
             _graphics.PreferredBackBufferWidth = 1280;
             _graphics.SynchronizeWithVerticalRetrace = false;
+
+            this.IsFixedTimeStep = true;//false;
+            this.TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -105,7 +109,7 @@ namespace GameNeuronal
                 }
 
                 every_sec += 1;
-                speed += (float)(gameTime.TotalGameTime.TotalSeconds * 0.00025f);
+                speed += (float)(0.00000025f * gameTime.TotalGameTime.TotalSeconds);
             }
         }
 
@@ -122,6 +126,7 @@ namespace GameNeuronal
             }
 
             generation++;
+            every_sec = 0;
             speed = speedStart;
             GameOver = false;
         }
