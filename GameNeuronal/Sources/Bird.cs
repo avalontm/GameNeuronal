@@ -7,6 +7,11 @@ namespace GameNeuronal.Sources
     
     public class Bird : BaseEnemy
     {
+        //Animacion
+        int fotogramaActual;
+        float tiempoTranscurrido;
+        float tiempoCambioFotograma = 0.1f; // Cambia el fotograma cada 0.1 segundos
+        int totalFotogramas = 2;
 
         public Bird()
         {
@@ -37,11 +42,25 @@ namespace GameNeuronal.Sources
         }
 
 
+        void Animation()
+        {
+            tiempoTranscurrido += (float)MainGame.time.ElapsedGameTime.TotalSeconds;
+
+            if (tiempoTranscurrido >= tiempoCambioFotograma)
+            {
+                // Cambiar al siguiente fotograma de la animación
+                fotogramaActual = (fotogramaActual + 1) % totalFotogramas;
+                tiempoTranscurrido = 0;
+            }
+        }
+
         public override void Update(double speed)
         {
             base.Update(speed);
 
             x -= (int)speed;
+
+            Animation();
         }
 
         public override void Draw(SpriteBatch _spriteBatch)
@@ -50,7 +69,7 @@ namespace GameNeuronal.Sources
 
             coll = new Rectangle((int)x, (int)y, w, h);
 
-            _spriteBatch.Draw(rect, coll, Color.Green);
+            _spriteBatch.Draw(Animations.birds[fotogramaActual], coll, Color.White);
         }
     }
 }

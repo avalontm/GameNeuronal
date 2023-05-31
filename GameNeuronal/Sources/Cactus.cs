@@ -62,7 +62,7 @@ namespace GameNeuronal.Sources
             base.Draw(_spriteBatch);
             coll = new Rectangle((int)x, (int)y, w, h);
 
-            _spriteBatch.Draw(rect, coll, Color.Green);
+            _spriteBatch.Draw(Animations.cactus[type], coll, Color.White);
         }
     }
 }

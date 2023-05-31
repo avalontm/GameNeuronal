@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Input;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 
 namespace GameNeuronal
 {
@@ -13,6 +14,7 @@ namespace GameNeuronal
         public static GraphicsDeviceManager _graphics;
         public static IList<Dino> players;
         public static IList<BaseEnemy> enemies;
+        public static GameTime time { private set; get; }
         float speedStart = 12;
         public static float speed = 12;
         public static bool GameOver = false;
@@ -49,6 +51,8 @@ namespace GameNeuronal
             // TODO: use this.Content to load your game content here
             font = Content.Load<SpriteFont>("default");
 
+            Animations.Load(Content);
+
             background = new StageBackground();
             players = new List<Dino>();
             enemies = new List<BaseEnemy>();
@@ -64,6 +68,7 @@ namespace GameNeuronal
         protected override void Update(GameTime gameTime)
         {
             base.Update(gameTime);
+            time = gameTime;
 
             InputManager.GetState();
 

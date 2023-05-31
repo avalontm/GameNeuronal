@@ -25,6 +25,11 @@ namespace GameNeuronal.Sources
         //Red Reunoral (Inteligencia Artificial)
         NeuralNetwork neuralNetwork;
 
+        //Animacion
+        int fotogramaActual;
+        float tiempoTranscurrido;
+        float tiempoCambioFotograma = 0.1f; // Cambia el fotograma cada 0.1 segundos
+
         public Dino()
         {
             neuralNetwork = new NeuralNetwork();
@@ -279,7 +284,7 @@ namespace GameNeuronal.Sources
             {
                 coll = new Rectangle(x, y, w, h);
 
-                _spriteBatch.Draw(rect, coll, color);
+                _spriteBatch.Draw(Animations.dino[0], coll, color);
             }
         }
 
