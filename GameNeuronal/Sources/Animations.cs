@@ -10,6 +10,7 @@ namespace GameNeuronal.Sources
 {
     public static class Animations
     {
+        public static Texture2D[] stage { private set; get; }
         public static Texture2D[] dino { private set; get; }
         public static Texture2D[] cactus { private set; get; }
 
@@ -17,9 +18,12 @@ namespace GameNeuronal.Sources
 
         public static void Load(ContentManager Content)
         {
+            stage = new Texture2D[1];
             dino = new Texture2D[3];
             cactus = new Texture2D[6];
             birds = new Texture2D[2];
+
+            stage[0] = Content.Load<Texture2D>("ground");
 
             dino[0] = Content.Load<Texture2D>("dinosaur");
             birds[0] = Content.Load<Texture2D>("bird_1");

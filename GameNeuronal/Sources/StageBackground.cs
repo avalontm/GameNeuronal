@@ -21,7 +21,7 @@ namespace GameNeuronal.Sources
             x = 0;
             y = 535;
             w = 1280;
-            h =1;
+            h = 28;
         }
 
 
@@ -33,9 +33,9 @@ namespace GameNeuronal.Sources
 
         public void Draw(SpriteBatch _spriteBatch)
         {
-            Rectangle coords = new Rectangle((int)x, (int)y, w, h);
+            Rectangle coords = new Rectangle((int)x, (int)(y-(h/2))-8, w, h);
 
-            _spriteBatch.Draw(rect, coords, Color.White);
+            _spriteBatch.Draw(Animations.stage[0], coords, Color.White);
         }
     }
 }

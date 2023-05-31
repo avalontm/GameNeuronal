@@ -26,6 +26,7 @@ namespace GameNeuronal
         int every_sec = 0;
         int generation = 0;
         int alive = 0;
+        Dino playerTarget;
 
         public MainGame()
         {
@@ -137,7 +138,7 @@ namespace GameNeuronal
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.White);
             _spriteBatch.Begin();
 
             background.Draw(_spriteBatch);
@@ -176,20 +177,25 @@ namespace GameNeuronal
 
         void DrawDebug()
         {
-            if (players.Count > 0)
+            for (int i = 0; i < players.Count; i++)
             {
-                _spriteBatch.DrawString(font, $"(Obstacle) Distance: {players[0].CalculateDistanceToObstacle()}", new Vector2(20, 20), Color.Black);
-                _spriteBatch.DrawString(font, $"(Obstacle) X: {players[0].CalculateObstaclePositionX()}", new Vector2(20, 40), Color.Black);
-                _spriteBatch.DrawString(font, $"(Obstacle) Y: {players[0].CalculateObstaclePositionY()}", new Vector2(20, 60), Color.Black);
-                _spriteBatch.DrawString(font, $"(Obstacle) Width: {players[0].CalculateObstacleWidth()}", new Vector2(20, 80), Color.Black);
-                _spriteBatch.DrawString(font, $"(Obstacle) Height: {players[0].CalculateObstacleHeight()}", new Vector2(20, 100), Color.Black);
-                _spriteBatch.DrawString(font, $"(Dino) Y: {players[0].y}", new Vector2(20, 120), Color.Black);
-                _spriteBatch.DrawString(font, $"(Game) Speed: {speed}", new Vector2(20, 140), Color.Black);
-
+                if (!players[i].dead)
+                {
+                    playerTarget = players[i];
+                    break;
+                }
             }
 
-            _spriteBatch.DrawString(font, $"Generation: {generation}", new Vector2(_graphics.PreferredBackBufferWidth - 150, 20), Color.Black);
-            _spriteBatch.DrawString(font, $"Alive: {alive}", new Vector2(_graphics.PreferredBackBufferWidth - 150, 40), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstacle) Distance: {playerTarget.CalculateDistanceToObstacle()}", new Vector2(10, 20), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstacle) X: {playerTarget.CalculateObstaclePositionX()}", new Vector2(10, 40), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstacle) Y: {playerTarget.CalculateObstaclePositionY()}", new Vector2(10, 60), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstacle) Width: {playerTarget.CalculateObstacleWidth()}", new Vector2(10, 80), Color.Black);
+            _spriteBatch.DrawString(font, $"(Obstacle) Height: {playerTarget.CalculateObstacleHeight()}", new Vector2(10, 100), Color.Black);
+            _spriteBatch.DrawString(font, $"(Dino) Y: {playerTarget.y}", new Vector2(10, 120), Color.Black);
+            _spriteBatch.DrawString(font, $"(Game) Speed: {speed}", new Vector2(10, 140), Color.Black);
+
+            _spriteBatch.DrawString(font, $"Generation: {generation}", new Vector2(_graphics.PreferredBackBufferWidth - 250, 20), Color.Black);
+            _spriteBatch.DrawString(font, $"Alive: {alive}", new Vector2(_graphics.PreferredBackBufferWidth - 220, 40), Color.Black);
         }
     }
 }
